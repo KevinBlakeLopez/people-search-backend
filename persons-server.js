@@ -42,7 +42,7 @@ app.put("/person", async (req, res) => {
     const result = await pool.query(
       `UPDATE people
       SET (first_name) = '${req.body.first_name}'
-      WHERE 
+      WHERE (id) =
          `
     );
     res.send(results.rows);
@@ -51,14 +51,14 @@ app.put("/person", async (req, res) => {
   }
 });
 
-app.delete("/", async (req, res) => {
-  try {
-    const result = await pool.query();
-    res.send(result.rows);
-  } catch (error) {
-    res.send(err);
-  }
-});
+// app.delete("/", async (req, res) => {
+//   try {
+//     const result = await pool.query();
+//     res.send(result.rows);
+//   } catch (error) {
+//     res.send(err);
+//   }
+// });
 
 app.listen(4000, () => {
   console.log("http://localhost:4000");
