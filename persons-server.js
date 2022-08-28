@@ -29,10 +29,10 @@ app.get("/people", async (req, res) => {
 app.post("/person", async (req, res) => {
   try {
     const result = await pool.query(
-      `INSERT INTO people (first_name) VALUES ('${req.body.first_name}') RETURNING first_name;`
+      `INSERT INTO people (first_name) VALUES ('${req.body.first_name}') RETURNING *;`
     );
     res.send(result.rows);
-  } catch (error) {
+  } catch (err) {
     res.send(err);
   }
 });
@@ -41,12 +41,12 @@ app.put("/person", async (req, res) => {
   try {
     const result = await pool.query(
       `UPDATE people
-      SET (first_name) = '${req.body.first_name}'
-      WHERE (id) =
-         `
+      SET first_name = '${req.body.first_name}'
+      WHERE id = ${req.body.id}
+      RETURNING *;`
     );
-    res.send(results.rows);
-  } catch (error) {
+    res.send(result.rows);
+  } catch (err) {
     res.send(err);
   }
 });
@@ -55,7 +55,7 @@ app.put("/person", async (req, res) => {
 //   try {
 //     const result = await pool.query();
 //     res.send(result.rows);
-//   } catch (error) {
+//   } catch (err) {
 //     res.send(err);
 //   }
 // });
