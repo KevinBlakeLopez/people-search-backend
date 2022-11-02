@@ -1,6 +1,8 @@
 const express = require("express");
+//postgres middleware
 const { Pool } = require("pg");
 
+//cross origin resource sharing  middleware
 const cors = require("cors");
 
 const app = express();
@@ -10,10 +12,11 @@ app.use(cors());
 
 const pool = new Pool({
   connectionString: process.env.CONNECTSTRING,
+  // connectionString: "postgres://adzoofqf:nFuySRlJ_5vYwB0ChLkyEZd1LDXkLssv@heffalump.db.elephantsql.com/adzoofqf"
 });
 
 app.get("/", (req, res) => {
-  res.send("hi hi hi");
+  res.send("Greetings.  This is people search.");
 });
 
 app.get("/people", async (req, res) => {
@@ -27,6 +30,7 @@ app.get("/people", async (req, res) => {
 });
 
 app.post("/person", async (req, res) => {
+  console.log("working!");
   try {
     const result = await pool.query(
       `INSERT INTO people (first_name) VALUES ('${req.body.first_name}') RETURNING *;`
@@ -51,14 +55,29 @@ app.put("/person", async (req, res) => {
   }
 });
 
-// app.delete("/", async (req, res) => {
-//   try {
-//     const result = await pool.query();
-//     res.send(result.rows);
-//   } catch (err) {
-//     res.send(err);
-//   }
-// });
+app.delete("/people", async (req, res) => {
+  try {
+    const result = await pool.query(
+        `TRUNCATE people`
+     );
+    res.send(result.rows);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+app.delete("/person", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `DELETE from people
+       WHERE id = '${req.body.id}'
+       RETURNING *;`
+    );
+    res.send(result.rows);
+  } catch (err) {
+    res.send(err);
+  }
+})
 
 app.listen(4000, () => {
   console.log("http://localhost:4000");
